@@ -65,18 +65,24 @@ def cd_sift_ransac(img, template):
 		matchesMask = mask.ravel().tolist()
 
 		h, w = template.shape
+		#coordinates of the edges of template img in order of top left, bottom left, bottom right, top right
 		pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
 
 		########## YOUR CODE STARTS HERE ##########
-		
+		#dst is an array of respective transformed pts by the homography matrix M
                 dst = np.int32(cv2.perspectiveTransform(pts, M))
 
                 # get the min and max x and y coordinates of the object
-                x_min = min(dst[x, 0][0] for x in range(4))
-                x_max = max(dst[x, 0][0] for x in range(4))
-                y_min = min(dst[x, 0][1] for x in range(4))
-                y_max = max(dst[x, 0][1] for x in range(4))
-
+                #x_min = min(dst[x, 0][0] for x in range(4))
+                #x_max = max(dst[x, 0][0] for x in range(4))
+                #y_min = min(dst[x, 0][1] for x in range(4))
+                #y_max = max(dst[x, 0][1] for x in range(4))
+		x_min = dst[0,0,0]
+		x_max = dst[2,0,0]
+		y_min = dst[0,0,1]
+		y_max = dst[2,0,1]
+		
+		#draws the bounding box
                 cv2.rectangle(img,(x_min,y_min),(x_max,y_max),(0,255,0),2)
                 image_print(img)
 
