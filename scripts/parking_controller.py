@@ -20,6 +20,8 @@ class ParkingController():
 
         self.relative_x = 0
         self.relative_y = 0
+        self.current_distance = 0
+        self.back_up = False
 
     def relative_cone_callback(self, msg):
         self.relative_x = msg.x_pos
@@ -35,6 +37,31 @@ class ParkingController():
         # drive_cmd.
         
         #################################
+        self.current_distance = np.sign(self.relative_x)*np.linalg.norm([self.relative_x, self.relative_y])
+        current_angle = np.arctan2(self.relative_y, self.relative_x) 
+
+        if (self.current_distance - parking_distance) < 0 or (abs(self.current_distance - parking_distance) < 0.5 and abs(current_angle) > 1e-1):
+            self.back_up = True
+
+        if(self.back_up):
+            print "Backing up"
+            drive_velocity = -1
+            wheel_angle = np.sign(drive_velocity)*current_angle
+            if (abs(current_angle) < 1e-1):
+                self.back_up = False
+
+        else:
+            drive_velocity = (self.current_distance - parking_distance)
+            wheel_angle = np.sign(drive_velocity)*current_angle
+
+        rospy.loginfo(self.current_distance)
+        rospy.loginfo(current_angle)
+
+
+        drive_cmd.header.frame_id = "base_link"
+        drive_cmd.header.stamp = rospy.get_rostime()
+        drive_cmd.drive.speed = drive_velocity 
+        drive_cmd.drive.steering_angle = wheel_angle
         self.drive_pub.publish(drive_cmd)
         self.error_publisher()
         
@@ -49,6 +76,9 @@ class ParkingController():
         
         # Your Code Here
         # Populate error_msg with relative_x, relative_y, sqrt(x^2+y^2)
+        error_msg.x_error = self.relative_x
+        error_msg.y_error = self.relative_y
+        error_msg.distance_error = self.current_distance 
 
         #################################
         self.error_pub.publish(error_msg)
