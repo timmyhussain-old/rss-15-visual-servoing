@@ -116,7 +116,8 @@ def cd_template_matching(img, template):
 	(img_height, img_width) = img_canny.shape[:2]
 
 	# Keep track of best-fit match
-	best_match = None
+	#Lisa: as list of [best coeff, bounding box: ([top left coord], [bottom right coord])]
+	best_match = [None,None]
 
 	# Loop over different scales of image template
 	for scale in np.linspace(1.5, .5, 50):
@@ -132,7 +133,32 @@ def cd_template_matching(img, template):
 		# across template scales.
 		# Remember to resize the bounding box using the highest scoring scale
 		# x1,y1 pixel will be accurate, but x2,y2 needs to be correctly scaled
-		bounding_box = ((0,0),(0,0))
-		########### YOUR CODE ENDS HERE ###########
 
+		# All the 6 methods for comparison in a list
+		#['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
+            	#	'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
+
+		#use resized_template and img_canny
+		method = eval('cv2.TM_CCORR_NORMED')
+		res = cv2.matchTemplate(img_canny,resized_template,method)
+		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+		# If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum for optimal value
+		if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+			if best_match == [None, None] or (min_val<best_match[0]):
+				top_left = min_loc
+				bottom_right = (top_left[0] + w, top_left[1] + h)
+				best_match[0] = min_val
+				best_match[1] = (top_left, bottom_right)
+		else:
+			if best_match == [None, None] or (max_val>best_match[0]): #update
+				top_left = max_loc
+				bottom_right = (top_left[0] + w, top_left[1] + h)
+				best_match[0] = max_val
+				best_match[1] = (top_left, bottom_right)
+	
+	bounding_box = best_match[1]#((0,0),(0,0))
+		
+	cv2.rectangle(img, best_match[1][0], best_match[1][1], 255, 2)
+	image_print(img)
+	########### YOUR CODE ENDS HERE ###########
 	return bounding_box
