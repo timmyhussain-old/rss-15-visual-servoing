@@ -69,7 +69,16 @@ def cd_sift_ransac(img, template):
 
 		########## YOUR CODE STARTS HERE ##########
 		
-		x_min = y_min = x_max = y_max = 0
+                dst = np.int32(cv2.perspectiveTransform(pts, M))
+
+                # get the min and max x and y coordinates of the object
+                x_min = min(dst[x, 0][0] for x in range(4))
+                x_max = max(dst[x, 0][0] for x in range(4))
+                y_min = min(dst[x, 0][1] for x in range(4))
+                y_max = max(dst[x, 0][1] for x in range(4))
+
+                cv2.rectangle(img,(x_min,y_min),(x_max,y_max),(0,255,0),2)
+                image_print(img)
 
 		########### YOUR CODE ENDS HERE ###########
 
