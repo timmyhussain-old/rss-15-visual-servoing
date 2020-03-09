@@ -5,4 +5,8 @@
 
   <node pkg="lab4" name="cone_sim_marker" type="cone_sim_marker.py" output="screen">
   </node>
+
+  <node pkg="lab4" name="homography" type="homography.py" output="screen">
+  </node>
+
 </launch>
