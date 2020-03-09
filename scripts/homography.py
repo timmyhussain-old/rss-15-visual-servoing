@@ -17,8 +17,8 @@ class Homography():
         self.bridge = Cv_Bridge()
         self.message_frame = "map"
 
-        self.src_points = np.array([[599.0, 228.0], [152.0, 231.0], [374.0, 231.0], [475.0, 195.0], [249.0, 195.0], [363.0, 195.0], [426.0, 179.0], [291.0, 181.0], [359.0, 181.0]])
-        self.dest_points = np.array([[36.0, -24.0], [36.0, 24.0], [36.0, 0.0], [72.0, -24.0], [72.0, 24.0], [72.0, 0.0], [120.0, -24.0], [120.0, 24.0], [120.0, 0.0]])/39.37
+        self.src_points = np.array([[0.775,0.055], [0.925, 0.055], [0.925, -0.25], [0.775, -0.25]])
+        self.dest_points = np.array([[366.0, 223.0], [366.0, 213.0], [475.0, 211.0], [495.0, 219.0]])
         self.homography_mat = cv2.findHomography(self.src_points,self.dest_points)
 
         #subscribe to camera
@@ -54,12 +54,12 @@ class Homography():
         marker.pose.position.z = z
         self.marker_pub.Publish(marker)
 
-
     def click_callback(self,point):
         x = data.x
         y = data.y
-        coords = np.dot(self.h[0], np.array([[x], [y], [1]]))
-		coords = coords/coords[2]
+        coords = np.dot(self.homography_mat[0], np.array([[x], [y], [1]]))
+        #normalizing over z
+        coords = coords/coords[2]
 		self.draw_marker((coords[0], coords[1]))
 
 if __name__ == '__main__':
