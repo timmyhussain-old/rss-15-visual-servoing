@@ -59,14 +59,16 @@ class ParkingController():
         drive_velocity = -self.pid_distance(self.current_distance) 
         wheel_angle = np.sign(drive_velocity)*phi
 
-        if drive_velocity < 1e-1 and abs(phi) > 1e-1: 
+        if drive_velocity < 0.5 and abs(phi) > 1e-1: 
             self.back_up = True
 
         if(self.back_up):
-            drive_velocity = -1.5*np.abs(wheel_angle)
+            self.pid_distance.setpoint = 0
+            drive_velocity = self.pid_distance(abs(phi)) 
             wheel_angle = np.sign(drive_velocity)*phi
             if (np.abs(phi) < 1e-1):
                 self.back_up = False
+                self.pid_distance.setpoint = self.PARKING_DISTANCE
 
         drive_cmd.header.frame_id = "base_link"
         drive_cmd.header.stamp = rospy.get_rostime()
