@@ -39,29 +39,34 @@ class Homography():
         except:
             print(CvBridgeError)
 
-    def draw_marker(self, x,y,z):
+    def draw_marker(self, x,y):
         marker = Marker()
         marker.header.frame_id = self.message_frame
         marker.type = marker.SPHERE
         marker.action = marker.ADD
-        marker.scale.x = 2000
-        marker.scale.y = 2000
-        marker.scale.z = 2000
+
+        marker.scale.x = 10
+        marker.scale.y = 10
+        marker.scale.z = 10
+
         marker.color.a = 1.0
         marker.color.r = 1.0
         marker.color.g = 1.0
         marker.pose.position.x = x
         marker.pose.position.y = y
+
         marker.pose.position.z = 1
         self.marker_pub.publish(marker)
 
-    def click_callback(self, point):
+
+
+    def click_callback(self,point):
         x = point.x
         y = point.y
         coords = np.dot(self.homography_mat[0], np.array([[x], [y], [1]]))
         #normalizing over z
         coords = coords/coords[2]
-	self.draw_marker(coords[0], coords[1], 1)
+	    self.draw_marker(coords[0], coords[1], 1)
         print "Marker placed at: " +str(coords[0]) + str(coords[1])
 
 if __name__ == '__main__':
