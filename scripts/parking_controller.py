@@ -13,7 +13,7 @@ class ParkingController():
     Can be used in the simulator and on the real robot.
     """
     #Vehicle Wheel Base
-    L = 0.5
+    L = 0.32
     l_fw = L/2
     PARKING_DISTANCE = 0.75
     SPEED_LIMIT = 5
