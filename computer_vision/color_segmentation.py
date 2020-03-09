@@ -35,6 +35,9 @@ def cd_color_segmentation(img, template):
 				(x1, y1) is the bottom left of the bbox and (x2, y2) is the top right of the bbox
 	"""
 	########## YOUR CODE STARTS HERE ##########
+        
+        # Convert BGR to HSV
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 	bounding_box = ((0,0),(0,0))
 	
@@ -63,9 +66,6 @@ def cd_color_segmentation(img, template):
 	#bounding box
 	x,y,w,h = cv2.boundingRect(cnt)
     bounding_box=((x,y),(x+w,y+h))
-
-
-
 
 	########### YOUR CODE ENDS HERE ###########
 
