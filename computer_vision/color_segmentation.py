@@ -37,6 +37,35 @@ def cd_color_segmentation(img, template):
 	########## YOUR CODE STARTS HERE ##########
 
 	bounding_box = ((0,0),(0,0))
+	
+	# Convert BGR to HSV
+	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # define range of orange color in HSV
+	lower_orange = np.array([20,50,50])
+	upper_orange = np.array([40,255,255])
+
+	# Threshold the HSV image to get only orange colors
+    mask = cv2.inRange(hsv, lower_orange, upper_orange)
+
+	#erosion
+	kernel = np.ones((5,5),np.uint8)
+	erosion = cv2.erode(mask,kernel,iterations = 1)
+
+	#dilation
+	dilation = cv2.dilate(mask,kernel,iterations = 1)
+
+	#find contours 
+	contours,hierarchy = cv2.findContours(dilation, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+	cnt = contours[0]
+
+	#bounding box
+	x,y,w,h = cv2.boundingRect(cnt)
+    bounding_box=((x,y),(x+w,y+h))
+
+
+
 
 	########### YOUR CODE ENDS HERE ###########
 
