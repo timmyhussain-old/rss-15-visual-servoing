@@ -66,7 +66,7 @@ class Homography():
         coords = np.dot(self.homography_mat[0], np.array([[x], [y], [1]]))
         #normalizing over z
         coords = coords/coords[2]
-	    self.draw_marker(coords[0], coords[1], 1)
+	self.draw_marker(coords[0], coords[1], 1)
         print "Marker placed at: " +str(coords[0]) + str(coords[1])
 
 if __name__ == '__main__':
